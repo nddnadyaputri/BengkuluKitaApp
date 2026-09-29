@@ -70,7 +70,7 @@ class CheckoutController extends Controller
 
             'payment_method' => [
                 'required',
-                'in:Transfer Bank,QRIS,COD',
+                'in:QRIS',
             ],
         ], [
             'customer_name.required' =>
@@ -101,7 +101,8 @@ class CheckoutController extends Controller
 
             $order = DB::transaction(function () use (
                 $cart,
-                $validated
+                $validated,
+                $request
             ) {
 
                 /*
@@ -177,6 +178,8 @@ class CheckoutController extends Controller
                 */
 
                 $order = Order::create([
+                    'user_id' => $request->user()?->id,
+
                     'customer_name' =>
                         $validated['customer_name'],
 
@@ -192,13 +195,9 @@ class CheckoutController extends Controller
                     'status' =>
                         'Pesanan Baru',
 
-                    'payment_method' =>
-                        $validated['payment_method'],
+                    'payment_method' => 'QRIS',
 
-                    'payment_status' =>
-                        $validated['payment_method'] === 'COD'
-                            ? 'Belum Dibayar'
-                            : 'Menunggu Pembayaran',
+                    'payment_status' => 'Menunggu Pembayaran',
 
                     'paid_at' => null,
                 ]);
@@ -253,6 +252,14 @@ class CheckoutController extends Controller
 
             $request->session()->forget('cart');
 
+            $guestOrders = $request->session()->get('guest_order_ids', []);
+            $guestOrders[] = $order->id;
+            $request->session()->put('guest_order_ids', array_values(array_unique($guestOrders)));
+
+            if ($validated['payment_method'] === 'QRIS') {
+                return redirect()->route('checkout.pay', $order);
+            }
+
             return redirect()
                 ->route(
                     'checkout.success',
@@ -274,15 +281,67 @@ class CheckoutController extends Controller
         }
     }
 
-    public function success(Order $order): View
+    private function authorizeOrder(Request $request, Order $order): void
     {
-        $order->load([
-            'items.product',
-        ]);
+        if ($request->user()?->role === 'admin') {
+            return;
+        }
 
-        return view(
-            'checkout.success',
-            compact('order')
+        $guestOrders = $request->session()->get('guest_order_ids', []);
+
+        abort_unless(
+            ($order->user_id && $request->user()?->id === $order->user_id)
+            || in_array($order->id, $guestOrders, true),
+            403
         );
+    }
+
+    public function pay(
+        Request $request,
+        Order $order
+    ): View|RedirectResponse {
+        $this->authorizeOrder($request, $order);
+
+        if ($order->payment_method !== 'QRIS'
+            || $order->payment_status === 'Dibayar'
+            || $order->status === 'Dibatalkan') {
+            return redirect()->route('checkout.success', $order);
+        }
+
+        $order->load('items.product');
+        $settings = \App\Models\SiteSetting::first();
+
+        return view('checkout.pay', [
+            'order' => $order,
+            'settings' => $settings,
+        ]);
+    }
+
+    public function confirmPayment(
+        Request $request,
+        Order $order
+    ): RedirectResponse {
+        $this->authorizeOrder($request, $order);
+
+        if ($order->payment_status !== 'Dibayar') {
+            $order->update([
+                'payment_status' => 'Menunggu Verifikasi',
+            ]);
+        }
+
+        return redirect()
+            ->route('checkout.success', $order)
+            ->with('success', 'Konfirmasi pembayaran sudah dikirim. Admin akan memeriksa pembayaran QRIS kamu.');
+    }
+
+    public function success(
+        Request $request,
+        Order $order
+    ): View {
+        $this->authorizeOrder($request, $order);
+
+        $order->load('items.product');
+
+        return view('checkout.success', compact('order'));
     }
 }

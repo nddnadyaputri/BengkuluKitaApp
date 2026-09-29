@@ -18,6 +18,7 @@ class SiteSetting extends Model
         'address',
         'opening_hours',
         'logo',
+        'qris_image',
         'footer_text',
     ];
 }

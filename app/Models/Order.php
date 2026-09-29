@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Order extends Model
 {
     protected $fillable = [
+        'user_id',
+        'midtrans_order_id',
+        'snap_token',
+        'payment_type',
         'customer_name',
         'phone',
         'address',

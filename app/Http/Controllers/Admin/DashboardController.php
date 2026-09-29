@@ -30,38 +30,49 @@ class DashboardController extends Controller
 
         $totalOrders = Order::count();
 
-        $newOrders = Order::where('status', 'pending')->count();
+        $newOrders = Order::where('status', 'Pesanan Baru')->count();
 
-        $processingOrders = Order::where('status', 'processing')->count();
+        $processingOrders = Order::where('status', 'Diproses')->count();
 
-        $shippedOrders = Order::where('status', 'shipped')->count();
+        $shippedOrders = Order::where('status', 'Dikirim')->count();
 
-        $completedOrders = Order::where('status', 'completed')->count();
+        $completedOrders = Order::where('status', 'Selesai')->count();
 
-        $cancelledOrders = Order::where('status', 'cancelled')->count();
+        $cancelledOrders = Order::where('status', 'Dibatalkan')->count();
 
-        $returnedOrders = Order::where('status', 'returned')->count();
+        $returnedOrders = Order::where('status', 'Dikembalikan')->count();
 
 
         /*
         |--------------------------------------------------------------------------
         | KEUANGAN
         |--------------------------------------------------------------------------
+        |
+        | Hanya pesanan yang sudah dibayar yang dihitung sebagai pendapatan.
+        |
         */
 
-        // Hanya pembayaran yang sudah berhasil dianggap sebagai penjualan.
-        $salesRevenue = Order::where('payment_status', 'paid')
+        $totalSales = Order::where('payment_status', 'Dibayar')
             ->sum('total');
 
-        // Total uang yang sudah dikembalikan kepada pelanggan.
-        $refundRevenue = Order::where('refund_status', 'completed')
-            ->sum('refund_amount');
 
-        // Pendapatan bersih.
-        $netRevenue = max(
-            $salesRevenue - $refundRevenue,
-            0
-        );
+        /*
+        |--------------------------------------------------------------------------
+        | PENGEMBALIAN DANA
+        |--------------------------------------------------------------------------
+        */
+
+        $refundRevenue = Order::where('status', 'Dikembalikan')
+            ->sum('total');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PENDAPATAN BERSIH
+        |--------------------------------------------------------------------------
+        */
+
+        $netRevenue = $totalSales - $refundRevenue;
 
 
         /*
@@ -70,40 +81,20 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $latestOrders = Order::with('items')
-            ->latest()
-            ->take(8)
-            ->get();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | PENJUALAN TERBARU
-        |--------------------------------------------------------------------------
-        */
-
-        $latestSales = Order::where('payment_status', 'paid')
-            ->latest('paid_at')
+        $latestOrders = Order::latest()
             ->take(5)
             ->get();
 
 
         /*
         |--------------------------------------------------------------------------
-        | PENGEMBALIAN TERBARU
+        | TAMPILKAN DASHBOARD
         |--------------------------------------------------------------------------
         */
-
-        $latestRefunds = Order::where('refund_status', 'completed')
-            ->latest('refunded_at')
-            ->take(5)
-            ->get();
-
 
         return view('admin.dashboard', compact(
             'totalProducts',
             'totalStock',
-
             'totalOrders',
             'newOrders',
             'processingOrders',
@@ -111,14 +102,10 @@ class DashboardController extends Controller
             'completedOrders',
             'cancelledOrders',
             'returnedOrders',
-
-            'salesRevenue',
+            'totalSales',
             'refundRevenue',
             'netRevenue',
-
-            'latestOrders',
-            'latestSales',
-            'latestRefunds'
+            'latestOrders'
         ));
     }
 }

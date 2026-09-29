@@ -1,0 +1,38 @@
+PERUBAHAN BENGKULUKITA - CHECKOUT QRIS
+
+1. Pembeli dapat belanja tanpa dipaksa login.
+2. Login/registrasi pembeli tetap tersedia.
+3. Login Admin tersedia di /admin/login.
+4. Admin dapat mengelola produk dan pesanan/pembayaran.
+5. Keranjang menampilkan badge jumlah produk.
+6. Checkout menggunakan QRIS toko.
+7. Setelah checkout, pembeli langsung melihat halaman QRIS.
+8. Pembeli menekan "Saya Sudah Bayar" setelah transfer/scan QRIS.
+9. Admin memeriksa pembayaran lalu mengubah status menjadi "Dibayar".
+
+SETUP QRIS:
+- Login sebagai admin.
+- Buka Admin > Pengaturan.
+- Pada bagian QRIS Pembayaran, upload gambar QRIS asli milik toko.
+- Simpan pengaturan.
+- QRIS tersebut akan muncul otomatis ketika pembeli checkout.
+
+AKUN ADMIN DEFAULT:
+Email    : admin@bengkulukita.test
+Password : admin12345
+
+Jika database baru:
+php artisan migrate
+php artisan db:seed --class=AdminSeeder
+php artisan storage:link
+
+Jika project baru:
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan db:seed --class=AdminSeeder
+php artisan storage:link
+npm install
+npm run build
+php artisan serve

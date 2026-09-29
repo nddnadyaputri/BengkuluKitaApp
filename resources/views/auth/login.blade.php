@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Masuk - BengkuluKita</title>
+    <title>Login - BengkuluKita</title>
 
     @vite([
         'resources/css/app.css',
@@ -15,7 +15,6 @@
 <body class="min-h-screen bg-[#f7f0e4]">
 
 <div class="min-h-screen grid lg:grid-cols-2">
-
 
     {{-- =====================================================
         LEFT - VISUAL BENGKULU
@@ -214,7 +213,7 @@
 
 
 
-            {{-- CARD --}}
+            {{-- CARD LOGIN --}}
             <div
                 class="bg-white
                        rounded-[2rem]
@@ -225,24 +224,18 @@
 
                 <div class="mb-7">
 
-                    <h3
-                        class="text-2xl
-                               font-extrabold"
-                    >
-                        Masuk
+                    <h3 class="text-2xl font-extrabold">
+                        Login
                     </h3>
 
-                    <p
-                        class="mt-2
-                               text-sm
-                               text-gray-500"
-                    >
-                        Masuk untuk melanjutkan belanja di BengkuluKita.
+                    <p class="mt-2 text-sm text-gray-500">
+                        Masuk untuk melanjutkan ke BengkuluKita.
                     </p>
 
                 </div>
 
 
+                {{-- PESAN ERROR --}}
                 @if ($errors->any())
 
                     <div
@@ -283,6 +276,7 @@
                 @endif
 
 
+                {{-- FORM LOGIN --}}
                 <form
                     method="POST"
                     action="{{ route('login') }}"
@@ -362,6 +356,7 @@
                     </div>
 
 
+                    {{-- TOMBOL LOGIN --}}
                     <button
                         type="submit"
                         class="w-full
@@ -381,17 +376,10 @@
                 </form>
 
 
-                <div
-                    class="mt-7
-                           pt-6
-                           border-t border-[#eee4d7]
-                           text-center"
-                >
+                {{-- REGISTER --}}
+                <div class="mt-7 pt-6 border-t border-[#eee4d7] text-center">
 
-                    <p
-                        class="text-sm
-                               text-gray-500"
-                    >
+                    <p class="text-sm text-gray-500">
                         Belum punya akun?
                     </p>
 
@@ -412,6 +400,7 @@
             </div>
 
 
+            {{-- KEMBALI --}}
             <div class="text-center mt-6">
 
                 <a

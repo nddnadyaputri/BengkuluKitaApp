@@ -330,130 +330,26 @@
                     <div class="mt-8">
 
 
-                        {{-- USER SUDAH LOGIN --}}
-                        @auth
+                        @if($product->stock > 0)
 
-                            @if($product->stock > 0)
-
-                                <form
-                                    method="POST"
-                                    action="{{ route('cart.add', $product) }}"
-                                >
-
-                                    @csrf
-
-                                    <button
-                                        type="submit"
-                                        class="w-full
-                                               bg-[#29251f]
-                                               text-white
-                                               py-4
-                                               px-6
-                                               rounded-2xl
-                                               font-black
-                                               text-base
-                                               hover:bg-[#8b6b45]
-                                               hover:-translate-y-1
-                                               hover:shadow-xl
-                                               transition
-                                               duration-300"
-                                    >
-
-                                        🛒 Tambah ke Keranjang
-
-                                    </button>
-
-                                </form>
-
-
-                                <p class="text-center
-                                          text-xs
-                                          text-[#91877b]
-                                          mt-3">
-
-                                    Produk akan ditambahkan ke keranjang kamu.
-
-                                </p>
-
-                            @else
-
+                            <form method="POST" action="{{ route('cart.add', $product) }}">
+                                @csrf
                                 <button
-                                    disabled
-                                    class="w-full
-                                           bg-gray-200
-                                           text-gray-400
-                                           py-4
-                                           px-6
-                                           rounded-2xl
-                                           font-black
-                                           cursor-not-allowed"
-                                >
-
-                                    Stok Habis
-
+                                    type="submit"
+                                    class="w-full bg-[#29251f] text-white py-4 px-6 rounded-2xl font-black text-base hover:bg-[#8b6b45] hover:-translate-y-1 hover:shadow-xl transition duration-300">
+                                    🛒 Tambah ke Keranjang
                                 </button>
+                            </form>
 
-                            @endif
+                            <p class="text-center text-xs text-[#91877b] mt-3">
+                                Tidak perlu login. Produk langsung masuk ke keranjang.
+                            </p>
 
-
-                        {{-- GUEST / BELUM LOGIN --}}
                         @else
-
-                            @if($product->stock > 0)
-
-                                <a
-                                    href="{{ route('login') }}"
-                                    class="block w-full
-                                           text-center
-                                           bg-[#29251f]
-                                           text-white
-                                           py-4
-                                           px-6
-                                           rounded-2xl
-                                           font-black
-                                           text-base
-                                           hover:bg-[#8b6b45]
-                                           hover:-translate-y-1
-                                           hover:shadow-xl
-                                           transition
-                                           duration-300"
-                                >
-
-                                    🔐 Login untuk Membeli
-
-                                </a>
-
-                                <p class="text-center
-                                          text-xs
-                                          text-[#91877b]
-                                          mt-3">
-
-                                    Silakan login atau daftar terlebih dahulu
-                                    untuk menambahkan produk ke keranjang.
-
-                                </p>
-
-                            @else
-
-                                <button
-                                    disabled
-                                    class="w-full
-                                           bg-gray-200
-                                           text-gray-400
-                                           py-4
-                                           px-6
-                                           rounded-2xl
-                                           font-black
-                                           cursor-not-allowed"
-                                >
-
-                                    Stok Habis
-
-                                </button>
-
-                            @endif
-
-                        @endauth
+                            <button disabled class="w-full bg-gray-200 text-gray-400 py-4 px-6 rounded-2xl font-black cursor-not-allowed">
+                                Stok Habis
+                            </button>
+                        @endif
 
                     </div>
 

@@ -52,17 +52,13 @@
                         Produk
                     </a>
 
-                    @auth
-                        <a href="{{ route('cart.index') }}"
-                           class="hover:text-[#8b6b45] transition">
-                            Keranjang
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}"
-                           class="hover:text-[#8b6b45] transition">
-                            Keranjang
-                        </a>
-                    @endauth
+                    <a href="{{ route('cart.index') }}" class="relative hover:text-[#8b6b45] transition">
+                        Keranjang
+                        @php($cartCount = collect(session('cart', []))->sum('quantity'))
+                        @if($cartCount > 0)
+                            <span class="absolute -top-3 -right-5 min-w-5 h-5 px-1 rounded-full bg-[#8b6b45] text-white text-[10px] font-black flex items-center justify-center">{{ $cartCount }}</span>
+                        @endif
+                    </a>
 
                     @auth
 
@@ -340,7 +336,7 @@
                                     </p>
 
                                     <p class="text-xl font-black text-[#8b6b45]">
-                                        Rp {{ number_format($product->price, 0, ',', '.') }}
+                                       number_format($product->price, 0, ',', '.')
                                     </p>
                                 </div>
 

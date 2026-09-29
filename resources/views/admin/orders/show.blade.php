@@ -221,6 +221,7 @@
                             @foreach([
                                 'Belum Dibayar',
                                 'Menunggu Pembayaran',
+                                'Menunggu Verifikasi',
                                 'Dibayar'
                             ] as $paymentStatus)
 

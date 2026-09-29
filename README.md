@@ -56,3 +56,40 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## Perubahan Checkout QRIS
+- Pembeli dapat menambah produk ke keranjang tanpa harus login.
+- Checkout meminta nama, WhatsApp, dan alamat.
+- Setelah checkout, halaman pembayaran langsung menampilkan QRIS toko.
+- QRIS toko diunggah oleh admin melalui **Admin > Pengaturan > QRIS Pembayaran**.
+- Setelah pembeli membayar, pembeli menekan **Saya Sudah Bayar**.
+- Admin dapat memeriksa pesanan dan mengubah status pembayaran menjadi **Dibayar**.
+- Login pembeli tetap tersedia melalui `/login` dan registrasi `/register`.
+- Login admin menggunakan akun admin dan diarahkan ke dashboard admin.
+- Badge pada menu Keranjang menampilkan jumlah produk yang sedang ada di keranjang.
+
+### Akun Admin
+Jalankan:
+```bash
+php artisan db:seed --class=AdminSeeder
+```
+Akun default:
+- Email: `admin@bengkulukita.test`
+- Password: `admin12345`
+
+### Setelah menyalin project
+Jalankan:
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan db:seed --class=AdminSeeder
+php artisan storage:link
+npm install
+npm run build
+php artisan serve
+```
+
+> Penting: upload gambar QRIS milik toko melalui dashboard admin sebelum pembeli melakukan pembayaran. QRIS asli tidak bisa dibuat otomatis oleh aplikasi tanpa data/gambar QRIS milik merchant.

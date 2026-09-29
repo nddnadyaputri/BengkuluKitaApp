@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 
@@ -6,13 +6,30 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\MidtransNotificationController;
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\SiteSettingController;
+use App\Http\Controllers\Admin\QrisController;
 
 
+/*
+|--------------------------------------------------------------------------
+| LOGIN PILIHAN
+|--------------------------------------------------------------------------
+*/
+
+
+
+/*
+|--------------------------------------------------------------------------
+| HOME
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 /*
 |--------------------------------------------------------------------------
 | HALAMAN PEMBELI
@@ -35,33 +52,49 @@ Route::get('/produk/{product}', [ProductController::class, 'show'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
+// Pembeli dapat berbelanja tanpa akun/login.
+Route::get('/keranjang', [CartController::class, 'index'])
+    ->name('cart.index');
 
-    // Keranjang
-    Route::get('/keranjang', [CartController::class, 'index'])
-        ->name('cart.index');
+Route::post('/keranjang/tambah/{product}', [CartController::class, 'add'])
+    ->name('cart.add');
 
-    Route::post('/keranjang/tambah/{product}', [CartController::class, 'add'])
-        ->name('cart.add');
+Route::patch('/keranjang/{product}', [CartController::class, 'update'])
+    ->name('cart.update');
 
-    Route::patch('/keranjang/{product}', [CartController::class, 'update'])
-        ->name('cart.update');
+Route::delete('/keranjang/{product}', [CartController::class, 'remove'])
+    ->name('cart.remove');
 
-    Route::delete('/keranjang/{product}', [CartController::class, 'remove'])
-        ->name('cart.remove');
+// Checkout guest + QRIS
+Route::get('/checkout', [CheckoutController::class, 'index'])
+    ->name('checkout.index');
+
+Route::post('/checkout', [CheckoutController::class, 'store'])
+    ->name('checkout.store');
+
+Route::get('/checkout/bayar/{order}', [CheckoutController::class, 'pay'])
+    ->name('checkout.pay');
+
+Route::post('/checkout/bayar/{order}/konfirmasi', [CheckoutController::class, 'confirmPayment'])
+    ->name('checkout.confirm-payment');
+
+Route::get('/checkout/sukses/{order}', [CheckoutController::class, 'success'])
+    ->name('checkout.success');
 
 
-    // Checkout
-    Route::get('/checkout', [CheckoutController::class, 'index'])
-        ->name('checkout.index');
+// Webhook Midtrans (tanpa auth & CSRF, diverifikasi lewat signature)
+Route::post('/midtrans/notification', MidtransNotificationController::class)
+    ->name('midtrans.notification');
 
-    Route::post('/checkout', [CheckoutController::class, 'store'])
-        ->name('checkout.store');
 
-    Route::get('/checkout/sukses/{order}', [CheckoutController::class, 'success'])
-        ->name('checkout.success');
-});
-
+/*
+|--------------------------------------------------------------------------
+| LOGIN ADMIN
+|--------------------------------------------------------------------------
+*/
+Route::get('/admin/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])
+    ->middleware('guest')
+    ->name('admin.login');
 
 /*
 |--------------------------------------------------------------------------

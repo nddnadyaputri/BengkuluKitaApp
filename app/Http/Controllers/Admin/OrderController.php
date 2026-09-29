@@ -72,7 +72,7 @@ class OrderController extends Controller
         $validated = $request->validate([
             'payment_status' => [
                 'required',
-                'in:Belum Dibayar,Menunggu Pembayaran,Dibayar',
+                'in:Belum Dibayar,Menunggu Pembayaran,Menunggu Verifikasi,Dibayar',
             ],
         ]);
 

@@ -527,7 +527,22 @@
                                 </div>
 
 
-                                <div class="flex-1">
+                                                <div class="bg-[#fffaf2] border border-[#e2d5c3] rounded-2xl p-5">
+                    <h3 class="font-bold text-[#29251f]">QRIS Pembayaran</h3>
+                    <p class="text-sm text-[#8b6b45] mt-1">Upload gambar QRIS toko. Gambar ini akan muncul otomatis saat pembeli checkout.</p>
+
+                    @if($settings->qris_image)
+                        <div class="mt-4">
+                            <img src="{{ asset('storage/' . $settings->qris_image) }}" alt="QRIS" class="w-56 h-56 object-contain rounded-xl border border-[#e2d5c3] bg-white p-2">
+                        </div>
+                    @endif
+
+                    <input type="file" name="qris_image" accept=".jpg,.jpeg,.png,.webp"
+                           class="mt-4 block w-full rounded-xl border border-[#d8cbbb] bg-white px-4 py-3 text-sm">
+                    @error('qris_image') <p class="text-sm text-red-600 mt-2">{{ $message }}</p> @enderror
+                </div>
+
+<div class="flex-1">
 
                                     <label class="block text-sm font-semibold text-[#29251f] mb-2">
                                         Ganti Logo

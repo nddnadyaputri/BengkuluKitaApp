@@ -87,9 +87,11 @@
 
                 <div
                     class="hidden md:flex
-                           items-center gap-7
+                           items-center gap-6
                            text-sm font-semibold"
                 >
+
+                    {{-- BERANDA --}}
 
                     <a
                         href="{{ route('home') }}"
@@ -99,6 +101,9 @@
                         Beranda
                     </a>
 
+
+                    {{-- PRODUK --}}
+
                     <a
                         href="{{ route('products.index') }}"
                         class="hover:text-[#8b6b45]
@@ -107,39 +112,142 @@
                         Produk
                     </a>
 
+
+                    {{-- FAQ --}}
+
                     <a
-                        href="{{ route('cart.index') }}"
-                        class="text-[#8b6b45]"
+                        href="{{ route('home') }}#faq"
+                        class="hover:text-[#8b6b45]
+                               transition"
                     >
-                        Keranjang
+                        FAQ
                     </a>
 
 
-                    @if(auth()->user()->role === 'admin')
+                    {{-- KONTAK --}}
+
+                    <a
+                        href="{{ route('home') }}#kontak"
+                        class="hover:text-[#8b6b45]
+                               transition"
+                    >
+                        Kontak
+                    </a>
+
+
+                    {{-- KERANJANG --}}
+
+                    <a
+                        href="{{ route('cart.index') }}"
+                        class="text-[#8b6b45]
+                               hover:text-[#29251f]
+                               transition"
+                    >
+
+                        Keranjang
+
+                        @php
+                            $cartCount = collect(
+                                session('cart', [])
+                            )->sum('quantity');
+                        @endphp
+
+                        @if($cartCount > 0)
+
+                            <span
+                                class="ml-1
+                                       inline-flex
+                                       min-w-5
+                                       h-5
+                                       px-1
+                                       rounded-full
+                                       bg-[#8b6b45]
+                                       text-white
+                                       text-[10px]
+                                       font-black
+                                       items-center
+                                       justify-center"
+                            >
+                                {{ $cartCount }}
+                            </span>
+
+                        @endif
+
+                    </a>
+
+
+                    {{-- LOGIN / AKUN --}}
+
+                    @auth
+
+                        {{-- ADMIN LOGIN --}}
+
+                        @if(auth()->user()->role === 'admin')
+
+                            <a
+                                href="{{ route('admin.dashboard') }}"
+                                class="bg-[#29251f]
+                                       text-white
+                                       px-4 py-2
+                                       rounded-xl
+                                       font-bold
+                                       hover:bg-[#8b6b45]
+                                       hover:-translate-y-0.5
+                                       hover:shadow-lg
+                                       transition"
+                            >
+                                Dashboard Admin
+                            </a>
+
+
+                        {{-- PEMBELI LOGIN --}}
+
+                        @else
+
+                            <span
+                                class="text-[#8b6b45]
+                                       font-semibold
+                                       whitespace-nowrap"
+                            >
+                                Halo, {{ auth()->user()->name }}
+                            </span>
+
+                        @endif
+
+
+                    {{-- BELUM LOGIN --}}
+
+                    @else
 
                         <a
-                            href="{{ route('admin.dashboard') }}"
+                            href="{{ route('login') }}"
+                            class="text-[#8b6b45]
+                                   font-bold
+                                   hover:text-[#29251f]
+                                   transition
+                                   whitespace-nowrap"
+                        >
+                            Login Pembeli
+                        </a>
+
+
+                        <a
+                            href="{{ route('admin.login') }}"
                             class="bg-[#29251f]
                                    text-white
                                    px-4 py-2
                                    rounded-xl
+                                   font-bold
+                                   hover:bg-[#8b6b45]
                                    hover:-translate-y-0.5
                                    hover:shadow-lg
-                                   transition"
+                                   transition
+                                   whitespace-nowrap"
                         >
-                            Dashboard Admin
+                            Login Admin
                         </a>
 
-                    @else
-
-                        <span
-                            class="text-[#8b6b45]"
-                        >
-                            Halo,
-                            {{ auth()->user()->name }}
-                        </span>
-
-                    @endif
+                    @endauth
 
                 </div>
 
@@ -263,10 +371,19 @@
 
                     @foreach($cartItems as $item)
 
+    @php
+        $product = $item['product'];
+        $quantity = $item['quantity'];
+        $subtotal = $item['subtotal'];
+    @endphp
                         @php
+
                             $product = $item['product'];
+
                             $quantity = $item['quantity'];
+
                             $subtotal = $item['subtotal'];
+
                         @endphp
 
 
@@ -287,7 +404,7 @@
                             >
 
 
-                                {{-- GAMBAR --}}
+                                {{-- GAMBAR PRODUK --}}
 
                                 <a
                                     href="{{ route('products.show', $product) }}"
@@ -333,7 +450,7 @@
                                 </a>
 
 
-                                {{-- INFORMASI --}}
+                                {{-- INFORMASI PRODUK --}}
 
                                 <div
                                     class="flex-1
@@ -386,6 +503,8 @@
                                     </div>
 
 
+                                    {{-- QUANTITY + SUBTOTAL --}}
+
                                     <div
                                         class="flex
                                                flex-col
@@ -427,9 +546,7 @@
 
                                                 <button
                                                     type="button"
-                                                    onclick="decreaseQuantity(
-                                                        'quantity-{{ $product->id }}'
-                                                    )"
+                                                    onclick="decreaseQuantity('quantity-{{ $product->id }}')"
                                                     class="w-10 h-10
                                                            font-black
                                                            text-[#8b6b45]
@@ -459,9 +576,7 @@
 
                                                 <button
                                                     type="button"
-                                                    onclick="increaseQuantity(
-                                                        'quantity-{{ $product->id }}'
-                                                    )"
+                                                    onclick="increaseQuantity('quantity-{{ $product->id }}')"
                                                     class="w-10 h-10
                                                            font-black
                                                            text-[#8b6b45]
@@ -490,6 +605,7 @@
                                                 Subtotal
                                             </p>
 
+
                                             <p
                                                 class="text-xl
                                                        font-black
@@ -506,7 +622,7 @@
                                 </div>
 
 
-                                {{-- DELETE --}}
+                                {{-- HAPUS PRODUK --}}
 
                                 <div
                                     class="flex
@@ -522,6 +638,7 @@
                                         @csrf
 
                                         @method('DELETE')
+
 
                                         <button
                                             type="submit"
@@ -542,12 +659,13 @@
 
                         </div>
 
+
                     @endforeach
 
                 </div>
 
 
-                {{-- RINGKASAN --}}
+                {{-- RINGKASAN PESANAN --}}
 
                 <div>
 
@@ -576,6 +694,8 @@
                         ></div>
 
 
+                        {{-- TOTAL PRODUK --}}
+
                         <div
                             class="flex
                                    justify-between
@@ -594,6 +714,8 @@
                         </div>
 
 
+                        {{-- TOTAL PEMBAYARAN --}}
+
                         <div
                             class="flex
                                    justify-between
@@ -606,6 +728,7 @@
                             >
                                 Total Pembayaran
                             </span>
+
 
                             <span
                                 class="text-2xl
@@ -663,6 +786,7 @@
                 </div>
 
             </div>
+
 
         @else
 
@@ -765,6 +889,7 @@
                         BengkuluKita
                     </h3>
 
+
                     <p
                         class="text-sm
                                text-[#cfc4b4]
@@ -801,8 +926,11 @@
             let value = parseInt(input.value) || 1;
 
             if (value > 1) {
+
                 input.value = value - 1;
+
                 input.form.submit();
+
             }
 
         }
@@ -817,8 +945,11 @@
             const max = parseInt(input.max);
 
             if (value < max) {
+
                 input.value = value + 1;
+
                 input.form.submit();
+
             }
 
         }

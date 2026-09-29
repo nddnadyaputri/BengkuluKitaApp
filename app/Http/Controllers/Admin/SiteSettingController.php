@@ -100,6 +100,13 @@ class SiteSettingController extends Controller
                 'mimes:jpg,jpeg,png,webp',
                 'max:2048',
             ],
+
+            'qris_image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:4096',
+            ],
         ]);
 
         $settings = SiteSetting::first();
@@ -119,6 +126,14 @@ class SiteSettingController extends Controller
         $settings->address = $request->address;
         $settings->opening_hours = $request->opening_hours;
         $settings->footer_text = $request->footer_text;
+
+        if ($request->hasFile('qris_image')) {
+            if ($settings->qris_image && Storage::disk('public')->exists($settings->qris_image)) {
+                Storage::disk('public')->delete($settings->qris_image);
+            }
+
+            $settings->qris_image = $request->file('qris_image')->store('site', 'public');
+        }
 
         if ($request->hasFile('logo')) {
 

@@ -2,7 +2,6 @@
 <html lang="id">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -18,7 +17,6 @@
         'resources/css/app.css',
         'resources/js/app.js'
     ])
-
 </head>
 
 
@@ -81,7 +79,10 @@
             </a>
 
 
+            {{-- ================================================= --}}
             {{-- DESKTOP NAVIGATION --}}
+            {{-- ================================================= --}}
+
             <nav class="hidden md:flex items-center gap-7">
 
                 <a
@@ -112,20 +113,129 @@
                     Kontak
                 </a>
 
+
                 @auth
 
-                    <a
-                        href="{{ route('cart.index') }}"
-                        class="text-sm font-semibold text-[#5e5143] hover:text-[#8b6b45] transition"
-                    >
-                        Keranjang
-                    </a>
+                    {{-- ================================================= --}}
+                    {{-- NAVBAR ADMIN --}}
+                    {{-- ================================================= --}}
+
+                    @if(auth()->user()->role === 'admin')
+
+                        <a
+                            href="{{ route('admin.dashboard') }}"
+                            class="text-sm font-semibold text-[#5e5143] hover:text-[#8b6b45] transition"
+                        >
+                            Dashboard Admin
+                        </a>
+
+                        <a
+                            href="{{ route('admin.products.index') }}"
+                            class="text-sm font-semibold text-[#5e5143] hover:text-[#8b6b45] transition"
+                        >
+                            Produk
+                        </a>
+
+                        <a
+                            href="{{ route('admin.orders.index') }}"
+                            class="text-sm font-semibold text-[#5e5143] hover:text-[#8b6b45] transition"
+                        >
+                            Pesanan
+                        </a>
+
+
+                        {{-- LOGOUT ADMIN --}}
+                        <form
+                            method="POST"
+                            action="{{ route('logout') }}"
+                            class="inline"
+                        >
+
+                            @csrf
+
+                            <button
+                                type="submit"
+                                class="text-sm font-semibold text-red-600 hover:text-red-800 transition"
+                            >
+                                Logout
+                            </button>
+
+                        </form>
+
+
+                    {{-- ================================================= --}}
+                    {{-- NAVBAR PEMBELI --}}
+                    {{-- ================================================= --}}
+
+                    @else
+
+                        <a
+                            href="{{ route('products.index') }}"
+                            class="text-sm font-semibold text-[#5e5143] hover:text-[#8b6b45] transition"
+                        >
+                            Belanja
+                        </a>
+
+
+                        <a
+                            href="{{ route('cart.index') }}"
+                            class="relative text-sm font-semibold text-[#5e5143] hover:text-[#8b6b45] transition"
+                        >
+
+                            Keranjang
+
+                            @php
+                                $cartCount = collect(session('cart', []))->sum('quantity');
+                            @endphp
+
+                            @if($cartCount > 0)
+
+                                <span
+                                    class="absolute -top-3 -right-5 min-w-5 h-5 px-1 rounded-full bg-[#8b6b45] text-white text-[10px] font-black flex items-center justify-center"
+                                >
+                                    {{ $cartCount }}
+                                </span>
+
+                            @endif
+
+                        </a>
+
+
+                        <span class="text-sm font-semibold text-[#8b6b45]">
+                            Hai, {{ auth()->user()->name }}
+                        </span>
+
+
+                        {{-- LOGOUT PEMBELI --}}
+                        <form
+                            method="POST"
+                            action="{{ route('logout') }}"
+                            class="inline"
+                        >
+
+                            @csrf
+
+                            <button
+                                type="submit"
+                                class="text-sm font-semibold text-red-600 hover:text-red-800 transition"
+                            >
+                                Logout
+                            </button>
+
+                        </form>
+
+                    @endif
+
 
                 @else
 
+                    {{-- ================================================= --}}
+                    {{-- BELUM LOGIN --}}
+                    {{-- ================================================= --}}
+
                     <a
                         href="{{ route('login') }}"
-                        class="text-sm font-semibold text-[#5e5143] hover:text-[#8b6b45] transition"
+                        class="px-4 py-2 rounded-xl bg-[#29251f] text-white text-sm font-semibold hover:bg-[#8b6b45] transition"
                     >
                         Login
                     </a>
@@ -135,17 +245,67 @@
             </nav>
 
 
-            {{-- MOBILE --}}
+            {{-- ================================================= --}}
+            {{-- MOBILE NAVIGATION --}}
+            {{-- ================================================= --}}
+
             <div class="flex items-center gap-2 md:hidden">
 
                 @auth
 
-                    <a
-                        href="{{ route('cart.index') }}"
-                        class="w-10 h-10 rounded-xl bg-[#f5e7c7] flex items-center justify-center"
+                    @if(auth()->user()->role === 'admin')
+
+                        <a
+                            href="{{ route('admin.dashboard') }}"
+                            class="px-4 py-2 rounded-xl bg-[#29251f] text-white text-sm font-semibold"
+                        >
+                            Admin
+                        </a>
+
+                    @else
+
+                        <a
+                            href="{{ route('cart.index') }}"
+                            class="relative w-10 h-10 rounded-xl bg-[#f5e7c7] flex items-center justify-center"
+                        >
+
+                            🛒
+
+                            @php
+                                $cartCount = collect(session('cart', []))->sum('quantity');
+                            @endphp
+
+                            @if($cartCount > 0)
+
+                                <span
+                                    class="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-[#8b6b45] text-white text-[10px] font-black flex items-center justify-center"
+                                >
+                                    {{ $cartCount }}
+                                </span>
+
+                            @endif
+
+                        </a>
+
+                    @endif
+
+
+                    <form
+                        method="POST"
+                        action="{{ route('logout') }}"
                     >
-                        🛒
-                    </a>
+
+                        @csrf
+
+                        <button
+                            type="submit"
+                            class="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-semibold"
+                        >
+                            Logout
+                        </button>
+
+                    </form>
+
 
                 @else
 
@@ -177,7 +337,6 @@
     class="relative min-h-[650px] overflow-hidden"
 >
 
-    {{-- BACKGROUND --}}
     <div class="absolute inset-0">
 
         <img
@@ -448,12 +607,8 @@
 
                     @if($settings->whatsapp)
 
-                        @php
-                            $waNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp);
-                        @endphp
-
                         <a
-                            href="https://wa.me/{{ $waNumber }}"
+                            href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $settings->whatsapp) }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             class="px-5 py-3 rounded-xl bg-[#f5e7c7] text-[#29251f] font-bold hover:bg-white hover:-translate-y-1 transition"
@@ -482,7 +637,6 @@
 
             <div class="grid sm:grid-cols-2 gap-4">
 
-                {{-- WHATSAPP --}}
                 @if($settings->whatsapp)
 
                     <div class="bg-white/10 border border-white/10 rounded-2xl p-5">
@@ -504,7 +658,6 @@
                 @endif
 
 
-                {{-- PHONE --}}
                 @if($settings->phone)
 
                     <div class="bg-white/10 border border-white/10 rounded-2xl p-5">
@@ -526,7 +679,6 @@
                 @endif
 
 
-                {{-- EMAIL --}}
                 @if($settings->email)
 
                     <div class="bg-white/10 border border-white/10 rounded-2xl p-5">
@@ -548,7 +700,6 @@
                 @endif
 
 
-                {{-- JAM --}}
                 @if($settings->opening_hours)
 
                     <div class="bg-white/10 border border-white/10 rounded-2xl p-5">
@@ -645,7 +796,6 @@
         </div>
 
 
-        {{-- CTA --}}
         <div class="mt-10 text-center">
 
             <p class="text-[#716354]">
@@ -653,22 +803,14 @@
             </p>
 
 
-            @if($settings->whatsapp)
-
-                @php
-                    $faqWaNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp);
-                @endphp
-
-                <a
-                    href="https://wa.me/{{ $faqWaNumber }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex mt-4 px-6 py-3 rounded-xl bg-[#29251f] text-white font-bold hover:bg-[#8b6b45] transition"
-                >
-                    💬 Tanya Admin Langsung
-                </a>
-
-            @endif
+            <a
+                href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $settings->whatsapp ?? '') }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex mt-4 px-6 py-3 rounded-xl bg-[#29251f] text-white font-bold hover:bg-[#8b6b45] transition"
+            >
+                💬 Tanya Admin Langsung
+            </a>
 
         </div>
 
@@ -691,7 +833,6 @@
 
         <div class="grid lg:grid-cols-2 gap-12">
 
-            {{-- INFO --}}
             <div>
 
                 <span class="text-sm font-bold uppercase tracking-[0.2em] text-[#8b6b45]">
@@ -798,7 +939,6 @@
             </div>
 
 
-            {{-- SOCIAL MEDIA --}}
             <div>
 
                 <div class="bg-[#29251f] rounded-[2rem] p-7 md:p-9 text-white">
@@ -825,11 +965,20 @@
                             >
 
                                 <span class="flex items-center gap-3">
-                                    <span class="text-xl">📸</span>
-                                    <span class="font-semibold">Instagram</span>
+
+                                    <span class="text-xl">
+                                        📸
+                                    </span>
+
+                                    <span class="font-semibold">
+                                        Instagram
+                                    </span>
+
                                 </span>
 
-                                <span>→</span>
+                                <span>
+                                    →
+                                </span>
 
                             </a>
 
@@ -846,11 +995,20 @@
                             >
 
                                 <span class="flex items-center gap-3">
-                                    <span class="text-xl">f</span>
-                                    <span class="font-semibold">Facebook</span>
+
+                                    <span class="text-xl">
+                                        f
+                                    </span>
+
+                                    <span class="font-semibold">
+                                        Facebook
+                                    </span>
+
                                 </span>
 
-                                <span>→</span>
+                                <span>
+                                    →
+                                </span>
 
                             </a>
 
@@ -867,40 +1025,50 @@
                             >
 
                                 <span class="flex items-center gap-3">
-                                    <span class="text-xl">♪</span>
-                                    <span class="font-semibold">TikTok</span>
+
+                                    <span class="text-xl">
+                                        ♪
+                                    </span>
+
+                                    <span class="font-semibold">
+                                        TikTok
+                                    </span>
+
                                 </span>
 
-                                <span>→</span>
+                                <span>
+                                    →
+                                </span>
 
                             </a>
 
                         @endif
 
 
-                        @if($settings->whatsapp)
+                        <a
+                            href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $settings->whatsapp ?? '') }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex items-center justify-between p-4 rounded-xl bg-[#f5e7c7] text-[#29251f] hover:bg-white transition"
+                        >
 
-                            @php
-                                $contactWaNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp);
-                            @endphp
+                            <span class="flex items-center gap-3">
 
-                            <a
-                                href="https://wa.me/{{ $contactWaNumber }}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="flex items-center justify-between p-4 rounded-xl bg-[#f5e7c7] text-[#29251f] hover:bg-white transition"
-                            >
-
-                                <span class="flex items-center gap-3">
-                                    <span class="text-xl">💬</span>
-                                    <span class="font-bold">WhatsApp Admin</span>
+                                <span class="text-xl">
+                                    💬
                                 </span>
 
-                                <span>→</span>
+                                <span class="font-bold">
+                                    WhatsApp Admin
+                                </span>
 
-                            </a>
+                            </span>
 
-                        @endif
+                            <span>
+                                →
+                            </span>
+
+                        </a>
 
                     </div>
 
@@ -922,7 +1090,6 @@
 
 <footer class="relative overflow-hidden bg-[#29251f] text-white">
 
-    {{-- TUGU BACKGROUND --}}
     <div class="absolute inset-0">
 
         <img
@@ -940,7 +1107,6 @@
 
         <div class="grid md:grid-cols-3 gap-10">
 
-            {{-- BRAND --}}
             <div>
 
                 <div class="flex items-center gap-3">
@@ -992,7 +1158,6 @@
             </div>
 
 
-            {{-- KONTAK --}}
             <div>
 
                 <h4 class="font-bold text-lg">
@@ -1018,7 +1183,6 @@
             </div>
 
 
-            {{-- SOSMED --}}
             <div>
 
                 <h4 class="font-bold text-lg">
@@ -1097,27 +1261,19 @@
 {{-- FLOATING WHATSAPP --}}
 {{-- ========================================================= --}}
 
-@if($settings->whatsapp)
+<a
+    href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $settings->whatsapp ?? '') }}"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#29251f] text-white flex items-center justify-center shadow-2xl border-2 border-[#f5e7c7] hover:scale-110 hover:bg-[#8b6b45] transition-all duration-300"
+    title="Hubungi Admin"
+>
 
-    @php
-        $floatingWaNumber = preg_replace('/[^0-9]/', '', $settings->whatsapp);
-    @endphp
+    <span class="text-2xl">
+        💬
+    </span>
 
-    <a
-        href="https://wa.me/{{ $floatingWaNumber }}"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#29251f] text-white flex items-center justify-center shadow-2xl border-2 border-[#f5e7c7] hover:scale-110 hover:bg-[#8b6b45] transition-all duration-300"
-        title="Hubungi Admin"
-    >
-
-        <span class="text-2xl">
-            💬
-        </span>
-
-    </a>
-
-@endif
+</a>
 
 
 </body>

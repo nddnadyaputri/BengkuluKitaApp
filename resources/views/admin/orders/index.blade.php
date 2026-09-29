@@ -216,6 +216,10 @@
                                             Dibayar
                                         </span>
 
+                                    @elseif($order->payment_status === 'Menunggu Verifikasi')
+                                        <span class="inline-flex mt-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-bold">
+                                            Menunggu Verifikasi
+                                        </span>
                                     @elseif($order->payment_status === 'Menunggu Pembayaran')
 
                                         <span class="inline-flex mt-2 px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold">
